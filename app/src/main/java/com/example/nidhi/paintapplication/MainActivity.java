@@ -94,22 +94,19 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        //TODO: way to show up the selection when paint, color selector or erase button is selected
-        //TODO: black color on eraser selection
-        //TODO: add to github
     }
 
     public void createNewDrawing(){
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
-        newDialog.setTitle("New drawing");
-        newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
-        newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+        newDialog.setTitle(getResources().getString(R.string.create_new_drawing));
+        newDialog.setMessage(getResources().getString(R.string.create_new_prompt));
+        newDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 mDrawView.startNew();
                 dialog.dismiss();
             }
         });
-        newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+        newDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 dialog.cancel();
             }
@@ -120,7 +117,7 @@ public class MainActivity extends AppCompatActivity{
     void openBrushSelection(){
         //draw button clicked, present user with a dialog to select the brush size
         final Dialog brushDialog = new Dialog(this);
-        brushDialog.setTitle("Brush size:");
+        brushDialog.setTitle(getResources().getString(R.string.brushsize));
         brushDialog.setContentView(R.layout.brush_chooser);
 
         displayColor(mColor);
@@ -165,14 +162,14 @@ public class MainActivity extends AppCompatActivity{
         AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, mColor, supportsAlpha, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-                Toast.makeText(getApplicationContext(), "ok", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.ok), Toast.LENGTH_SHORT).show();
                 MainActivity.this.mColor = color;
                 displayColor(color);
             }
 
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {
-                Toast.makeText(getApplicationContext(), "cancel", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.cancel), Toast.LENGTH_SHORT).show();
             }
         });
         dialog.show();
@@ -181,7 +178,7 @@ public class MainActivity extends AppCompatActivity{
     public void openEraserSelection(){
         //switch to erase - choose size
         final Dialog brushDialog = new Dialog(this);
-        brushDialog.setTitle("Eraser size:");
+        brushDialog.setTitle(getResources().getString(R.string.erasersize));
         brushDialog.setContentView(R.layout.brush_chooser);
 
         displayColor(0xffffffff);//set white color
@@ -217,9 +214,9 @@ public class MainActivity extends AppCompatActivity{
 
     public void saveDrawing(){
         AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
-        saveDialog.setTitle("Save drawing");
-        saveDialog.setMessage("Save drawing to device Gallery?");
-        saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+        saveDialog.setTitle(getResources().getString(R.string.savedrawing));
+        saveDialog.setMessage(getResources().getString(R.string.savedrawingtogallery));
+        saveDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 //save drawing
                 mDrawView.setDrawingCacheEnabled(true);
@@ -228,18 +225,18 @@ public class MainActivity extends AppCompatActivity{
                         UUID.randomUUID().toString()+".png", "drawing");
                 if(imgSaved!=null){
                     Toast savedToast = Toast.makeText(getApplicationContext(),
-                            "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+                            getResources().getString(R.string.saved), Toast.LENGTH_SHORT);
                     savedToast.show();
                 }
                 else{
                     Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                            "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
+                            getResources().getString(R.string.notsaved), Toast.LENGTH_SHORT);
                     unsavedToast.show();
                 }
                 mDrawView.destroyDrawingCache();
             }
         });
-        saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+        saveDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
                 dialog.cancel();
             }

@@ -12,4 +12,17 @@
     <string name="lrg">Large</string>
     <string name="new_drawing">NewDrawing</string>
 
+    <string name="create_new_drawing">New drawing</string>
+    <string name="create_new_prompt">Start new drawing (you will lose the current drawing)?</string>
+    <string name="yes">YES</string>
+    <string name="cancel">CANCEL</string>
+
+    <string name="brushsize">Brush size:</string>
+    <string name="ok">OK</string>
+    <string name="erasersize">Eraser size:</string>
+
+    <string name="savedrawing">Save drawing</string>
+    <string name="savedrawingtogallery">Save drawing to device Gallery?</string>
+    <string name="saved">Drawing saved to Gallery!</string>
+    <string name="notsaved">Oops! Image could not be saved.</string>
 </resources>

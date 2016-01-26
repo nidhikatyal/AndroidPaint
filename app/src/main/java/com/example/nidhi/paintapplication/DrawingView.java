@@ -62,7 +62,6 @@ public class DrawingView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         //view given size
         super.onSizeChanged(w, h, oldw, oldh);
-        //canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         canvasBitmap = Bitmap.createBitmap(getMeasuredWidth()  > 0 ? getMeasuredWidth()  : 1,
                 getMeasuredHeight() > 0 ? getMeasuredHeight() : 1,
                 Bitmap.Config.ARGB_8888);
