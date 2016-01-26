@@ -4,10 +4,10 @@ Paint application on android
 
 A basic paint application that provides user with a canvas to draw upon. Users can draw using their fingers on the canvas.
 •	Backward compatible (min sdkversion 15, targetSDK: 23)
-•	Supports basic drawing via touch
+•	Supports basic drawing via finger touch
 •	Supports creating new drawing, saving the existing one and erasing it
 •	Provides three brush/eraser sizes for drawing and erasing
-•	Drawings are saved in the png format with their current time stamp in the device gallery.
+•	Drawings are saved in the png format in the device gallery.
 •	Integrates a 3rd party library (Ambilwarna) for color picker, helps user to pick color for their drawing. This library is being used by multiple other applications with huge number of downloads. 
 
 Here are some of the details –
