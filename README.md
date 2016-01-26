@@ -1,7 +1,6 @@
-# AndroidPaint
+# Paint Application
 Paint application on android
 
-Paint Application
 
 A basic paint application that provides user with a canvas to draw upon. Users can draw using their fingers on the canvas.
 •	Backward compatible (min sdkversion 15, targetSDK: 23)
