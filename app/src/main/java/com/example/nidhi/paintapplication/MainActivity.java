@@ -2,6 +2,9 @@ package com.example.nidhi.paintapplication;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -28,11 +31,21 @@ public class MainActivity extends AppCompatActivity{
     private float mSmallBrush, mMediumBrush, mLargeBrush;
 
     //default paint color
-    int mColor = 0xffffff00;
+    int mColor = Color.BLUE;
+
+    private Bundle mScreenStates;
+    private static final String KEY_SCREEN_STATES = "key_screen_states";
+    private static final String KEY_SAVE_DIALOG = "key_save_dialog";
+    private static final String KEY_LAST_SELECTED_COLOR = "key_last_selected_color";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mScreenStates = (savedInstanceState != null)
+                ? savedInstanceState.getBundle(KEY_SCREEN_STATES)
+                : new Bundle();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,7 +107,34 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
+        else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mScreenStates.putInt(KEY_LAST_SELECTED_COLOR, mColor);
+        outState.putBundle(KEY_SCREEN_STATES, mScreenStates);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mScreenStates = savedInstanceState.getBundle(KEY_SCREEN_STATES);
+        if (mScreenStates != null) {
+            if (mScreenStates.getBoolean(KEY_SAVE_DIALOG, false)) {
+                saveDrawing();
+            }
+        }
+        mColor = mScreenStates.getInt(KEY_LAST_SELECTED_COLOR);
+    }
+
 
     public void createNewDrawing(){
         AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
@@ -114,7 +154,7 @@ public class MainActivity extends AppCompatActivity{
         newDialog.show();
     }
 
-    void openBrushSelection(){
+    public void openBrushSelection(){
         //draw button clicked, present user with a dialog to select the brush size
         final Dialog brushDialog = new Dialog(this);
         brushDialog.setTitle(getResources().getString(R.string.brushsize));
@@ -123,7 +163,7 @@ public class MainActivity extends AppCompatActivity{
         displayColor(mColor);
 
         //listen for clicks on three brush size buttons
-        ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+        final ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
         smallBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,7 +174,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+        final ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
         mediumBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,7 +185,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
+        final ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
         largeBtn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -158,7 +198,7 @@ public class MainActivity extends AppCompatActivity{
         brushDialog.show();
     }
 
-    void openColorPalette(boolean supportsAlpha) {
+    public void openColorPalette(boolean supportsAlpha) {
         AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, mColor, supportsAlpha, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
@@ -182,7 +222,7 @@ public class MainActivity extends AppCompatActivity{
         brushDialog.setContentView(R.layout.brush_chooser);
 
         displayColor(0xffffffff);//set white color
-        ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+        final ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
         smallBtn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -191,7 +231,7 @@ public class MainActivity extends AppCompatActivity{
                 brushDialog.dismiss();
             }
         });
-        ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+        final ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
         mediumBtn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -200,7 +240,7 @@ public class MainActivity extends AppCompatActivity{
                 brushDialog.dismiss();
             }
         });
-        ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
+        final ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
         largeBtn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -216,19 +256,18 @@ public class MainActivity extends AppCompatActivity{
         AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
         saveDialog.setTitle(getResources().getString(R.string.savedrawing));
         saveDialog.setMessage(getResources().getString(R.string.savedrawingtogallery));
-        saveDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
+        saveDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
                 //save drawing
                 mDrawView.setDrawingCacheEnabled(true);
                 String imgSaved = MediaStore.Images.Media.insertImage(
                         getContentResolver(), mDrawView.getDrawingCache(),
-                        UUID.randomUUID().toString()+".png", "drawing");
-                if(imgSaved!=null){
+                        UUID.randomUUID().toString() + ".png", "drawing");
+                if (imgSaved != null) {
                     Toast savedToast = Toast.makeText(getApplicationContext(),
                             getResources().getString(R.string.saved), Toast.LENGTH_SHORT);
                     savedToast.show();
-                }
-                else{
+                } else {
                     Toast unsavedToast = Toast.makeText(getApplicationContext(),
                             getResources().getString(R.string.notsaved), Toast.LENGTH_SHORT);
                     unsavedToast.show();
@@ -236,15 +275,22 @@ public class MainActivity extends AppCompatActivity{
                 mDrawView.destroyDrawingCache();
             }
         });
-        saveDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int which){
+        saveDialog.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
+        saveDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mScreenStates.putBoolean(KEY_SAVE_DIALOG, false);
+            }
+        });
         saveDialog.show();
+        mScreenStates.putBoolean(KEY_SAVE_DIALOG, true);
     }
 
-    void displayColor(int color) {
+    public void displayColor(int color) {
         //sets the color for the drawing
         mDrawView.setColor(color);
    }
